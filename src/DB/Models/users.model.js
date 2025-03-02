@@ -1,0 +1,90 @@
+import mongoose from "mongoose";
+import * as constants from "../../Constants/constants.js";
+
+const userModelSchema = new mongoose.Schema(
+    {
+        firstName: String,
+        lastName: String,
+        email: {
+            type: String,
+            unique: true,
+            required: true
+        },
+        password: String,
+        provider: {
+            type: String,
+            default: constants.providers.SYSTEM,
+            enum: Object.values(constants.providers)
+        },
+        gender: {
+            type: String,
+            default: constants.gender.NA,
+            enum: Object.values(constants.gender)
+        },
+        DOB: {
+            type: Date,
+            validate: {
+                validator: function (value) {
+                    const today = new Date();
+                    const minAge = new Date();
+                    minAge.setFullYear(today.getFullYear() - 18);
+                    return value < today && value <= minAge;
+                },
+                message: "DOB must be a valid date and user must be at least 18 years old"
+            }
+        },
+        phone: String,
+        role: {
+            type: String,
+            default: constants.roles.USER,
+            enum: Object.values(constants.roles)
+        },
+        isConfirmed: {
+            type: Boolean,
+            default: false
+        },
+        deletedAt: Date,
+        bannedAt: Date,
+        updatedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'users',
+        },
+        changeCredentialTime: Date,
+        otp: [{
+            code: {
+                type: String,
+                required: true
+            },
+            type: {
+                type: String,
+                enum: Object.values(constants.otpUsage),
+                required: true
+            },
+            expiresIn: {
+                type: Date,
+                required: true
+            }
+        }],
+        profilePic: {
+            secure_url: String,
+            public_id: String
+        },
+        coverPic: {
+            secure_url: String,
+            public_id: String
+        },
+    },
+    {
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true }
+    }
+)
+
+userModelSchema.virtual("userName").get(function () {
+    return `${this.firstName} ${this.lastName}`;
+});
+
+const UserModel = mongoose.models.users || mongoose.model('users', userModelSchema)
+
+export default UserModel
