@@ -3,6 +3,7 @@ import { config } from 'dotenv';
 import path from 'path';
 import database_connection from './DB/connection.js';
 import controllerHandler from './Utils/routersHandler.utils.js';
+import './Services/cronJob.service.js';
 
 if (process.env.NODE_ENV === 'dev') config({ path: path.resolve(`src/Config/.dev.env`) })
 config()
