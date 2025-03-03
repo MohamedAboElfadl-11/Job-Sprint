@@ -1,7 +1,7 @@
 import cron from "node-cron";
 import UserModel from "../DB/Models/users.model.js";
 
-cron.schedule("* * * * *", async () => {
+cron.schedule("0 */6 * * *", async () => {
     const result = await UserModel.updateMany(
         {},
         { $pull: { otp: { expiresIn: { $lt: new Date() } } } }

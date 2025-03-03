@@ -18,4 +18,14 @@ userRouters.get('/userData',
     errorHandlerMiddleware(user.userData)
 )
 
+userRouters.get('/profileData/:userId',
+    errorHandlerMiddleware(user.profileData)
+)
+
+userRouters.patch('/updatePassword',
+    validationMiddleware(validator.updatePasswordValidators),
+    errorHandlerMiddleware(authenticationMiddleware()),
+    errorHandlerMiddleware(user.updatePassword)
+)
+
 export default userRouters;

@@ -20,7 +20,8 @@ export const signUpValidator = {
         phone: Joi.string().pattern(/^\+?\d{10,15}$/).required().messages({
             "string.pattern.base": "Phone number must be a valid international format"
         }),
-        role: Joi.string().valid("user", "admin").default("user")
+        role: Joi.string().valid("user", "admin").default("user"),
+        // deletedAt: Joi.string().optional
     })
 }
 

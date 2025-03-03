@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import * as constants from "../../Constants/constants.js";
-import { decryption, encryption } from "../../Utils/crypto.utils.js";
+import { comparing, decryption, encryption, hashing } from "../../Utils/crypto.utils.js";
 
 const userModelSchema = new mongoose.Schema(
     {
@@ -82,8 +82,11 @@ const userModelSchema = new mongoose.Schema(
     }
 )
 
+
+
 userModelSchema.pre('save', async function (next) {
     if (this.isModified('phone')) this.phone = encryption(this.phone, process.env.SECRET_KEY)
+    if (this.isModified('password')) this.password = hashing(this.password, +process.env.SALT)
     next()
 })
 
@@ -91,11 +94,15 @@ userModelSchema.virtual("userName").get(function () {
     return `${this.firstName} ${this.lastName}`;
 });
 
-userModelSchema.methods.toJSON = function () {
+userModelSchema.methods.toJSON = function (entryPassword) {
     const userObject = this.toObject();
     userObject.phone = decryption(userObject.phone, process.env.SECRET_KEY);
     return userObject;
 };
+
+userModelSchema.methods.comparePassword = async function (entryPassword) {
+    return await comparing(entryPassword, this.password)
+}
 
 const UserModel = mongoose.models.users || mongoose.model('users', userModelSchema)
 
