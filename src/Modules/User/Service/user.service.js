@@ -1,4 +1,5 @@
 import UserModel from "../../../DB/Models/users.model.js";
+import { comparing, hashing } from "../../../Utils/crypto.utils.js";
 
 // update account service
 export const updateUserAccountService = async (req, res) => {
@@ -35,9 +36,10 @@ export const updatePassword = async (req, res) => {
     const { oldPassword, newPassword, confirmPasswoed } = req.body
     const user = await UserModel.findById(req.loginUser._id)
     if (!user) return res.status(400).json({ message: "user not found" })
-    const isMatched = await user.comparePassword(oldPassword)
-    if (!isMatched) return res.status(400).json({ message: "password not matched" })
-    user.password = newPassword 
+    const isMatched = comparing(oldPassword, user.password)
+    if (!isMatched) return res.status(400).json({ message: "wrong password" })
+    const hashedPassword = hashing(newPassword, +process.env.SALT)
+    user.password = hashedPassword
     await user.save()
     res.status(200).json({ message: 'password updated successfully' })
 }
