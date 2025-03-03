@@ -26,8 +26,8 @@ export const userData = async (req, res) => {
 // get profile data for another user
 export const profileData = async (req, res) => {
     const { userId } = req.params;
-    const user = await UserModel.findById(userId).select('firstName lastName phone')
-    if (!user) return res.status(404).json({ message: "user not found" })
+    const user = await UserModel.findById(userId).select('firstName lastName phone deletedAt')
+    if (!user || user.deletedAt <= new Date()) return res.status(404).json({ message: "user not found" })
     res.status(200).json({ user })
 }
 
@@ -42,4 +42,11 @@ export const updatePassword = async (req, res) => {
     user.password = hashedPassword
     await user.save()
     res.status(200).json({ message: 'password updated successfully' })
+}
+
+// soft delete account
+export const deleteAccount = async (req, res) => {
+    req.user.deletedAt = new Date();
+    await req.user.save()
+    res.status(200).json({ message: 'Account deleted successfully' })
 }

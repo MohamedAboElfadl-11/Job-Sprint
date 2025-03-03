@@ -4,6 +4,7 @@ import { errorHandlerMiddleware } from "../../Middlewares/errorHandler.middlewar
 import * as user from "./Service/user.service.js";
 import { validationMiddleware } from "../../Middlewares/validation.middleware.js";
 import * as validator from "../../Validators/User/user.validators.js";
+import { checkAuthUser } from "../../Middlewares/checkUser.middleware.js";
 
 const userRouters = Router()
 
@@ -26,6 +27,12 @@ userRouters.patch('/updatePassword',
     validationMiddleware(validator.updatePasswordValidators),
     errorHandlerMiddleware(authenticationMiddleware()),
     errorHandlerMiddleware(user.updatePassword)
+)
+
+userRouters.delete('/deleteAccount',
+    errorHandlerMiddleware(authenticationMiddleware()),
+    errorHandlerMiddleware(checkAuthUser),
+    errorHandlerMiddleware(user.deleteAccount)
 )
 
 export default userRouters;
