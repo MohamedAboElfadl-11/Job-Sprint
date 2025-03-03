@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import * as constants from "../../Constants/constants.js";
+import { decryption, encryption } from "../../Utils/crypto.utils.js";
 
 const userModelSchema = new mongoose.Schema(
     {
@@ -81,9 +82,20 @@ const userModelSchema = new mongoose.Schema(
     }
 )
 
+userModelSchema.pre('save', async function (next) {
+    if (this.isModified('phone')) this.phone = encryption(this.phone, process.env.SECRET_KEY)
+    next()
+})
+
 userModelSchema.virtual("userName").get(function () {
     return `${this.firstName} ${this.lastName}`;
 });
+
+userModelSchema.methods.toJSON = function () {
+    const userObject = this.toObject();
+    userObject.phone = decryption(userObject.phone, process.env.SECRET_KEY);
+    return userObject;
+};
 
 const UserModel = mongoose.models.users || mongoose.model('users', userModelSchema)
 
