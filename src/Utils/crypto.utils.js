@@ -5,7 +5,7 @@ export const encryption = (text, secretKey) => {
     return CryptoJS.AES.encrypt(text, secretKey).toString();
 };
 
-export const decryption = async (text, secretKey) => {
+export const decryption = (text, secretKey) => {
     const byte = CryptoJS.AES.decrypt(text, secretKey);
     return byte.toString(CryptoJS.enc.Utf8);
 };

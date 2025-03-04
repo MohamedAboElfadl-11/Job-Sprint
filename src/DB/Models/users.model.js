@@ -95,7 +95,7 @@ userModelSchema.pre('save', async function (next) {
 userModelSchema.post("findOne", async function (doc) {
     if (doc) {
         console.log(doc.phone)
-        doc.phone = await decryption(doc.phone, process.env.SECRET_KEY);
+        doc.phone = decryption(doc.phone, process.env.SECRET_KEY);
         console.log(doc.phone)
     }
 });
