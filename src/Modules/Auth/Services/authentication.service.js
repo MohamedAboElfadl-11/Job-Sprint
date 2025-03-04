@@ -12,8 +12,6 @@ export const signUpService = async (req, res) => {
     const { firstName, lastName, email, password, confirmPassword, gender, DOB, phone, role } = req.body;
     const isEmailExist = await UserModel.findOne({ email })
     if (isEmailExist) return res.status(400).json({ message: "email already exist" })
-    const encryptedPhone = secure.encryption(phone, process.env.SECRET_KEY);
-    const hashedPassword = secure.hashing(password, +process.env.SALT);
     const otp = Math.floor(100000 + Math.random() * 900000).toString()
     const hashedOtp = secure.hashing(otp, +process.env.SALT)
     const otpExpiration = DateTime.now().plus({ minutes: 10 }).toJSDate();
@@ -24,7 +22,7 @@ export const signUpService = async (req, res) => {
     })
     const birthDay = DateTime.fromISO(DOB).toJSDate();
     const user = new UserModel({
-        firstName, lastName, email, password: hashedPassword, phone: encryptedPhone, gender, role, DOB: birthDay,
+        firstName, lastName, email, password, phone, gender, role, DOB: birthDay,
         otp: [{ code: hashedOtp, type: "confirmEmail", expiresIn: otpExpiration }]
     })
     await user.save()

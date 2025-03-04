@@ -11,11 +11,13 @@ const userRouters = Router()
 userRouters.patch('/updateAccount',
     validationMiddleware(validator.updateAccountValidators),
     errorHandlerMiddleware(authenticationMiddleware()),
+    errorHandlerMiddleware(checkAuthUser),
     errorHandlerMiddleware(user.updateUserAccountService)
 )
 
 userRouters.get('/userData',
     errorHandlerMiddleware(authenticationMiddleware()),
+    errorHandlerMiddleware(checkAuthUser),
     errorHandlerMiddleware(user.userData)
 )
 
@@ -26,6 +28,7 @@ userRouters.get('/profileData/:userId',
 userRouters.patch('/updatePassword',
     validationMiddleware(validator.updatePasswordValidators),
     errorHandlerMiddleware(authenticationMiddleware()),
+    errorHandlerMiddleware(checkAuthUser),
     errorHandlerMiddleware(user.updatePassword)
 )
 
