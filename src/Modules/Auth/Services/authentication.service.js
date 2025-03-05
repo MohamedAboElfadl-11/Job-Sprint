@@ -52,9 +52,11 @@ export const verifyAccountService = async (req, res) => {
 export const loginService = async (req, res) => {
     const { email, password } = req.body;
     const user = await UserModel.findOne({ email })
-    if (!user) return res.status(401).json({ message: "invalied email or password" })
+    if (!user || (user.deletedAt && user.deletedAt <= new Date()) || (user.bannedAt && user.bannedAt <= new Date()))
+        return res.status(401).json({ message: "invalied email or password" })
     const userPassword = await secure.comparing(password, user.password)
-    if (!userPassword) return res.status(401).json({ message: "invalied email or password" })
+    if (!userPassword)
+        return res.status(401).json({ message: "invalied email or password" })
     const accesstoken = jwt.sign({ _id: user._id, email: user.email }, process.env.JWT_ACCESS_TOKEN, { expiresIn: '1h', jwtid: uuidv4() })
     const refreshtoken = jwt.sign({ _id: user._id, email: user.email }, process.env.JWT_REFRESH_TOKEN, { expiresIn: '7d', jwtid: uuidv4() })
     res.status(200).json({ message: "Login successfully", accesstoken, refreshtoken });

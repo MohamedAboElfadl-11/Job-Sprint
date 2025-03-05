@@ -92,11 +92,10 @@ userModelSchema.pre('save', async function (next) {
     if (this.isModified('password')) this.password = hashing(this.password, +process.env.SALT)
     next()
 })
+
 userModelSchema.post("findOne", async function (doc) {
     if (doc) {
-        console.log(doc.phone)
         doc.phone = decryption(doc.phone, process.env.SECRET_KEY);
-        console.log(doc.phone)
     }
 });
 
@@ -107,7 +106,6 @@ userModelSchema.post("findOne", async function (doc) {
 //     console.log(userObject.phone)
 //     return userObject;
 // };
-
 // userModelSchema.methods.comparePassword = async function (entryPassword) {
 //     return await comparing(entryPassword, this.password)
 // }

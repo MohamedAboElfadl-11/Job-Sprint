@@ -7,9 +7,18 @@ const companyModelSchema = new mongoose.Schema(
             required: true,
             unique: true
         },
-        description: String,
-        industry: String,
-        address: String,
+        description: {
+            type: String,
+            required: true,
+        },
+        industry: {
+            type: String,
+            required: true,
+        },
+        address: {
+            type: String,
+            required: true,
+        },
         numberOfEmployees: {
             type: String,
             required: true,
@@ -47,7 +56,10 @@ const companyModelSchema = new mongoose.Schema(
         },
         deletedAt: Date,
         bannedAt: Date,
-        approvedByAdmin: Boolean,
+        approvedByAdmin: {
+            type: Boolean,
+            default: false
+        },
         legalAttachment: {
             secure_url: String,
             public_id: String

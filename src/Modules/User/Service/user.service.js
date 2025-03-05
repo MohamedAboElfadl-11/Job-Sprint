@@ -3,12 +3,13 @@ import { comparing, hashing } from "../../../Utils/crypto.utils.js";
 
 // update account service
 export const updateUserAccountService = async (req, res) => {
-    const { phone, DOB, firstName, lastName, gender } = req.body;
+    const { phone, DOB, firstName, lastName, gender, role } = req.body;
     if (firstName) req.user.firstName = firstName
     if (lastName) req.user.lastName = lastName
     if (gender) req.user.gender = gender
     if (DOB) req.user.DOB = DOB
     if (phone) req.user.phone = phone;
+    if (role) req.user.role = role
     await req.user.save()
     res.status(201).json({ message: "Your Data updated successfully" })
 }
