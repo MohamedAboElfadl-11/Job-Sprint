@@ -5,12 +5,15 @@ import { authenticationMiddleware } from "../../Middlewares/authentication.middl
 import { checkAuthUser } from "../../Middlewares/checkUser.middleware.js";
 import { authorizationMiddleware } from "../../Middlewares/authirization.middleware.js";
 import * as admin from "./Service/admin.service.js";
+import { validationMiddleware } from "../../Middlewares/validation.middleware.js";
+import * as validator from "../../Validators/Admin/admin.validator.js";
 
 const adminRouters = Router()
 
 const { ADMIN } = roles
 
 adminRouters.post('/approveCompany',
+    validationMiddleware(validator.approveCompanyValidator),
     errorHandlerMiddleware(authenticationMiddleware()),
     errorHandlerMiddleware(checkAuthUser),
     authorizationMiddleware([ADMIN]),
@@ -18,6 +21,7 @@ adminRouters.post('/approveCompany',
 )
 
 adminRouters.post('/bannedUser',
+    validationMiddleware(validator.banUserValidator),
     errorHandlerMiddleware(authenticationMiddleware()),
     errorHandlerMiddleware(checkAuthUser),
     authorizationMiddleware([ADMIN]),
@@ -25,6 +29,7 @@ adminRouters.post('/bannedUser',
 )
 
 adminRouters.post('/bannedCompany',
+    validationMiddleware(validator.banCompanyValidator),
     errorHandlerMiddleware(authenticationMiddleware()),
     errorHandlerMiddleware(checkAuthUser),
     authorizationMiddleware([ADMIN]),

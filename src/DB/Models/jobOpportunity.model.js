@@ -20,7 +20,7 @@ const jobOpportunityModelSchema = new mongoose.Schema(
         seniorityLevel: {
             type: String,
             required: true,
-            enum: Object.values(constants.seniorityLeve)
+            enum: Object.values(constants.seniorityLevel)
         },
         jobDescription: {
             type: String,
@@ -55,6 +55,12 @@ const jobOpportunityModelSchema = new mongoose.Schema(
         timestamps: true
     }
 )
+
+jobOpportunityModelSchema.virtual("application", {
+    ref: "application",
+    localField: "_id",
+    foreignField: "jobId"
+});
 
 const JobOpportunityModel = mongoose.models.jobs || mongoose.model('jobs', jobOpportunityModelSchema)
 

@@ -6,29 +6,39 @@ const applicationModelSchema = new mongoose.Schema(
         jobId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'jobs',
-            required: true
+
         },
         userId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'users',
-            required: true
+
         },
         userCV: {
             secure_url: String,
             public_id: String,
-            required: true
+
         },
         status: {
             type: String,
             default: constants.applicationStatus.PENDING,
             enum: Object.values(constants.applicationStatus)
         }
-
     },
     {
         timestamps: true
     }
 )
+applicationModelSchema.virtual("jobDetails", {
+    ref: "jobs",
+    localField: "jobId",
+    foreignField: "_id",
+});
+
+applicationModelSchema.virtual("userDetails", {
+    ref: "users",
+    localField: "userId",
+    foreignField: "_id",
+});
 
 const ApplicationModel = mongoose.models.application || mongoose.model('application', applicationModelSchema)
 

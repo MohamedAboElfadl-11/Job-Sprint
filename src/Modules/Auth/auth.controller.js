@@ -41,4 +41,12 @@ authRouters.post('/resetPassword',
     errorHandlerMiddleware(auth.resetPasswordService)
 )
 
+authRouters.post("/gmail-login",
+    errorHandlerMiddleware(auth.loginGmailService)
+)
+
+authRouters.post("/gmail-signup",
+    errorHandlerMiddleware(auth.signupGmailService)
+)
+
 export default authRouters

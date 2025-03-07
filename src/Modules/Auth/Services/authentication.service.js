@@ -6,6 +6,8 @@ import * as secure from "../../../Utils/crypto.utils.js";
 import jwt from 'jsonwebtoken'
 import { v4 as uuidv4 } from "uuid";
 import BlackListTokensModel from "../../../DB/Models/blackedListTokens.model.js";
+import { OAuth2Client } from "google-auth-library";
+import { providers } from "../../../Constants/constants.js";
 
 // Signup service
 export const signUpService = async (req, res) => {
@@ -126,4 +128,46 @@ export const resetPasswordService = async (req, res) => {
         password: hashedPassword, $pull: { otp: { type: "forgetPassword" } }
     });
     res.status(200).json({ message: "password reset successfully" });
+}
+
+// Login with Gmail 
+export const loginGmailService = async (req, res) => {
+    const { idToken } = req.body;
+    const client = new OAuth2Client();
+    const ticket = await client.verifyIdToken({
+        idToken,
+        audience: process.env.CLINTID, 
+    });
+    const payload = ticket.getPayload();
+    const { email_verified, email } = payload
+    if (!email_verified) return res.status(400).json({ message: "invalid email credential" })
+    const user = await UserModel.findOne({ email, provider: providers.GOOGLE })
+    if (!user) return res.status(404).json({ message: "user not found" })
+    const accesstoken = jwt.sign({ _id: user._id, email: user.email }, process.env.JWT_ACCESS_TOKEN, { expiresIn: '1h', jwtid: uuidv4() })
+    const refreshtoken = jwt.sign({ _id: user._id, email: user.email }, process.env.JWT_REFRESH_TOKEN, { expiresIn: '7d', jwtid: uuidv4() })
+    res.status(200).json({ message: "Login successfully", accesstoken, refreshtoken });
+}
+
+// Signup with Gmail
+export const signupGmailService = async (req, res) => {
+    const { idToken } = req.body;
+    const client = new OAuth2Client();
+    const ticket = await client.verifyIdToken({
+        idToken,
+        audience: process.env.CLINTID,
+    });
+    const payload = ticket.getPayload();
+    const { email_verified, email, name } = payload
+    const isEmailExist = await UserModel.findOne({ email })
+    if (isEmailExist) return res.status(404).json({ message: "email already exist" })
+    if (!email_verified) return res.status(400).json({ message: "invalid email credential" })
+    const user = new UserModel({
+        username: name,
+        email,
+        provider: providers.GOOGLE,
+        isEmailVerified: true,
+        password: secure.hashing(uuidv4(), +process.env.SALT)
+    })
+    await user.save()
+    res.status(201).json({ message: "Account created successfully" })
 }

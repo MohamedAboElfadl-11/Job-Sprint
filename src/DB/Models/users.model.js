@@ -99,16 +99,11 @@ userModelSchema.post("findOne", async function (doc) {
     }
 });
 
-// userModelSchema.methods.toJSON = function () {
-//     const userObject = this.toObject();
-//     console.log(userObject)
-//     userObject.phone = decryption(userObject.phone, process.env.SECRET_KEY);
-//     console.log(userObject.phone)
-//     return userObject;
-// };
-// userModelSchema.methods.comparePassword = async function (entryPassword) {
-//     return await comparing(entryPassword, this.password)
-// }
+userModelSchema.virtual("applications", {
+    ref: "application",
+    localField: "_id",
+    foreignField: "userId"
+});
 
 const UserModel = mongoose.models.users || mongoose.model('users', userModelSchema)
 

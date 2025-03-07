@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { gender, roles } from "../../Constants/constants.js";
 
 export const signUpValidator = {
     body: Joi.object({
@@ -15,13 +16,12 @@ export const signUpValidator = {
         confirmPassword: Joi.string().valid(Joi.ref("password")).required().messages({
             "any.only": "Passwords do not match"
         }),
-        gender: Joi.string().valid("male", "female", "NA").default("NA"),
+        gender: Joi.string().valid(...Object.values(gender)).default("NA"),
         DOB: Joi.date().iso().max("now").min(new Date(new Date().setFullYear(new Date().getFullYear() - 100))).required(),
         phone: Joi.string().pattern(/^\+?\d{10,15}$/).required().messages({
             "string.pattern.base": "Phone number must be a valid international format"
         }),
-        role: Joi.string().valid("user", "admin").default("user"),
-        // deletedAt: Joi.string().optional
+        role: Joi.string().valid(...Object.values(roles)).default("user"),
     })
 }
 

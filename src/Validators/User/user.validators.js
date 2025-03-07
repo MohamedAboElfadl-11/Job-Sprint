@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { roles } from "../../Constants/constants.js";
 
 export const updateAccountValidators = {
     body: Joi.object({
@@ -7,7 +8,7 @@ export const updateAccountValidators = {
         phone: Joi.string().pattern(/^\d{10,15}$/).optional(),
         DOB: Joi.date().iso().optional(),
         gender: Joi.string().optional(),
-        role: Joi.string().valid("user", "admin").optional()
+        role: Joi.string().valid(...Object.values(roles)).optional()
     })
 }
 

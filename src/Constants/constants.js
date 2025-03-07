@@ -38,7 +38,7 @@ export const workingTime = {
 }
 
 // seniority Leve
-export const seniorityLeve = {
+export const seniorityLevel = {
     FRESH: 'fresh',
     JUNIOR: 'junior',
     MID_LEVEL: 'mid-level',
@@ -54,3 +54,5 @@ export const applicationStatus = {
     IN_CONSIDERATION: 'in-consideration',
     REJECTED: 'rejected'
 }
+
+export const imageExtentions = ['image/jpeg', 'image/png', 'application/pdf']

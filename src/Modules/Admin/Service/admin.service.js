@@ -32,10 +32,11 @@ export const banCompanyService = async (req, res) => {
 // approve company service
 export const approveCompanyService = async (req, res) => {
     const { companyEmail } = req.body
-    const company = await CompanyModel.findOne({ companyEmail })
+    const company = await CompanyModel.findOne({ companyEmail, bannedAt: { $exists: false }, deletedAt: { $exists: false } })
     if (!company) return res.status(404).json({ message: "company not found" })
     if (company.approvedByAdmin) return res.status(400).json({ message: "company already approved" })
     company.approvedByAdmin = true
     await company.save()
     res.status(200).json({ message: `yor company is approved by the admin` })
 }
+
