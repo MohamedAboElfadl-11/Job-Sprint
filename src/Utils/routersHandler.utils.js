@@ -13,6 +13,7 @@ const controllerHandler = (app) => {
     app.use('/admin', adminRouters)
     app.use('/job', jobRouters)
     app.use('/application', applicationRouters)
+    app.get('/', async (req, res) => { res.status(200).json({ message: "appworkdone" }) })
     app.use(globalErrorHandler)
 }
 

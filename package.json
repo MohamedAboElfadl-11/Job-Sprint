@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start:dev": "SET NODE_ENV=dev&&nodemon"
+    "start:dev": "SET NODE_ENV=dev&&nodemon",
+    "build": "npm i"
   },
   "keywords": [],
   "author": "",
